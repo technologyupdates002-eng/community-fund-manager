@@ -114,6 +114,28 @@ class WebsiteInitialContentSeeder extends Seeder
                 'image_alt' => 'A speaker addresses the KHCWW AGM and team-building gathering, 11 December 2025',
                 'starts_at' => '2025-12-11 00:00:00',
             ],
+            [
+                'content_type' => 'project',
+                'slug' => 'welfare-cafeteria',
+                'title' => 'KHCWW Welfare Cafeteria',
+                'category' => 'Economic empowerment',
+                'excerpt' => 'A member-owned cafeteria that brings affordable, wholesome meals to healthcare workers and grows a sustainable income stream for the welfare.',
+                'content' => "In line with the constitution's objective of supporting the social and economic development of members, KHCWW is opening a welfare cafeteria.\n\nWhy a cafeteria:\nHealthcare workers keep long hours. The cafeteria offers affordable, wholesome meals close to work, and its earnings flow back into the welfare to strengthen support for members in times of need.\n\nHow it is run:\nThe project is overseen by the elected office bearers and reported to members at general meetings, as the constitution requires for welfare activities.\n\nHow members can take part:\nMembers are welcome to visit, give feedback and propose ideas at meetings. Updates on progress will be shared here.",
+                'is_featured' => true,
+                'sort_order' => 0,
+                'image_url' => $this->mediaUrl($this->imagePath(55)),
+                'image_alt' => 'KHCWW members serving a meal together',
+            ],
+            [
+                'content_type' => 'page',
+                'slug' => 'constitution-objectives',
+                'title' => 'Objectives of the welfare',
+                'category' => 'Constitution',
+                'excerpt' => 'What KHCWW exists to do, as set out in its constitution.',
+                'content' => "Unite healthcare workers in Kirinyaga County.\nHelp members in times of need.\nEncourage participation in times of joy and sorrow.\nSupport the social, economic and professional development of members.",
+                'is_featured' => false,
+                'sort_order' => 0,
+            ],
         ];
 
         foreach (range(1, self::GALLERY_IMAGE_COUNT) as $number) {
