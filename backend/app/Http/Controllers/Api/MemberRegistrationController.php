@@ -141,6 +141,24 @@ class MemberRegistrationController extends Controller
 
         $checkoutRequestId = 'ws_REG_'.bin2hex(random_bytes(12));
 
+        // Real M-Pesa prompt through the Co-op Bank STK service when live calls are enabled;
+        // otherwise keep the existing simulated prompt.
+        if (config('coop_bank.enable_real_calls', false)) {
+            try {
+                $stk = app(\App\Services\CoopBank\CoopBankTransactionService::class)->initiateStkPush([
+                    'phone' => $normalizedPhone,
+                    'amount' => $amount,
+                    'narration' => 'KHCWW REGISTRATION FEE KES '.number_format($amount),
+                    'internal_reference' => 'REG-'.$registration->id,
+                    'payment_type' => 'registration_fee',
+                ]);
+                $checkoutRequestId = $stk['message_reference'] ?? $checkoutRequestId;
+            } catch (\Throwable $e) {
+                Log::warning('Registration STK push failed', ['registration_id' => $registration->id, 'error' => $e->getMessage()]);
+                throw new HttpException(502, 'stk_failed', 'Could not send the M-Pesa prompt. Please try again.');
+            }
+        }
+
         RegistrationFee::create([
             'id' => Uuid::v4(),
             'registration_id' => $registration->id,
@@ -152,14 +170,15 @@ class MemberRegistrationController extends Controller
             'updated_at' => now(),
         ]);
 
-        try {
-            $mockProvider = app(\App\Services\MockPaymentProvider::class);
-            $mockProvider->simulateStkPush($normalizedPhone, $amount, $checkoutRequestId);
-        } catch (\Throwable $e) {
-            Log::warning('Failed to initiate STK push for registration', [
-                'registration_id' => $registration->id,
-                'error' => $e->getMessage(),
-            ]);
+        if (! config('coop_bank.enable_real_calls', false)) {
+            try {
+                app(\App\Services\MockPaymentProvider::class)->simulateStkPush($normalizedPhone, $amount, $checkoutRequestId);
+            } catch (\Throwable $e) {
+                Log::warning('Failed to initiate STK push for registration', [
+                    'registration_id' => $registration->id,
+                    'error' => $e->getMessage(),
+                ]);
+            }
         }
 
         return response()->json([
@@ -177,6 +196,17 @@ class MemberRegistrationController extends Controller
 
         if (!$registration) {
             throw new HttpException(404, 'not_found', 'Registration not found');
+        }
+
+        if ($registration->payment_status !== 'paid') {
+            $fee = RegistrationFee::where('registration_id', $registration->id)->where('status', 'pending')->latest('created_at')->first();
+            $transfer = $fee ? \App\Models\CoopTransferRequest::where('message_reference', $fee->mpesa_checkout_request_id)->first() : null;
+            if ($transfer && $transfer->status === 'successful') {
+                $fee->update(['status' => 'paid', 'updated_at' => now()]);
+                $registration->update(['payment_status' => 'paid', 'updated_at' => now()]);
+            } elseif ($transfer && $transfer->status === 'failed') {
+                $fee->update(['status' => 'failed', 'updated_at' => now()]);
+            }
         }
 
         return response()->json([
