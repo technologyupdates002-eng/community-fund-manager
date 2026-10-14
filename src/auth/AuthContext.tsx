@@ -1,3 +1,4 @@
+import type React from 'react';
 import {
   createContext, useContext, useState, useEffect, useCallback,
   type ReactNode,
@@ -21,7 +22,10 @@ interface AuthContextValue {
   setDemoMode: (enabled: boolean) => void;
 }
 
-const AuthContext = createContext<AuthContextValue | null>(null);
+// Keep one context instance across hot reloads; otherwise a reloaded module
+// creates a new context and consumers no longer see the existing provider.
+const g = globalThis as unknown as { __khwwcAuthCtx?: React.Context<AuthContextValue | null> };
+const AuthContext = g.__khwwcAuthCtx ?? (g.__khwwcAuthCtx = createContext<AuthContextValue | null>(null));
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<AuthUser | null>(null);
