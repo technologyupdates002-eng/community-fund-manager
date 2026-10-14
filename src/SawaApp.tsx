@@ -4,7 +4,10 @@ import { queryClient } from '@/lib/query';
 import { AuthProvider, useAuth } from '@/auth/AuthContext';
 import { RequireAuth, getHomePath } from '@/auth/RouteGuard';
 import { AppLayout } from '@/layouts/AppLayout';
-import { PublicLayout } from '@/layouts/PublicLayout';
+import { SiteLayout } from '@/pages/site/SiteLayout';
+import SiteHome from '@/pages/site/SiteHome';
+import SiteJoin from '@/pages/site/SiteJoin';
+import { SiteAbout, SiteLeadership, SitePerson, SiteCollection, SiteDetail, SiteGallery, SiteContact } from '@/pages/site/SitePages';
 
 // Auth pages
 import LoginPage from '@/pages/auth/LoginPage';
@@ -108,13 +111,24 @@ export default function App() {
         <AuthProvider>
           <Routes>
             {/* Public website */}
-            <Route element={<PublicLayout />}>
-              <Route path="/" element={<HomePage />} />
-              <Route path="/public/website/leadership" element={<LeadershipPage />} />
-              <Route path="/public/website/people/:slug" element={<PersonDetailPage />} />
-              <Route path="/public/website/content/:type" element={<ContentListPage />} />
-              <Route path="/public/website/content/:type/:slug" element={<ContentDetailPage />} />
-              <Route path="/public/website/contact" element={<ContactPage />} />
+            <Route element={<SiteLayout />}>
+              <Route path="/" element={<SiteHome />} />
+              <Route path="/about" element={<SiteAbout />} />
+              <Route path="/leadership" element={<SiteLeadership />} />
+              <Route path="/leadership/:slug" element={<SitePerson />} />
+              <Route path="/projects" element={<SiteCollection kind="projects" />} />
+              <Route path="/projects/:slug" element={<SiteDetail kind="projects" />} />
+              <Route path="/news" element={<SiteCollection kind="news" />} />
+              <Route path="/news/:slug" element={<SiteDetail kind="news" />} />
+              <Route path="/events" element={<SiteCollection kind="events" />} />
+              <Route path="/events/:slug" element={<SiteDetail kind="events" />} />
+              <Route path="/gallery" element={<SiteGallery />} />
+              <Route path="/contact" element={<SiteContact />} />
+              <Route path="/join" element={<SiteJoin />} />
+              {/* Old public URLs keep working */}
+              <Route path="/public/website/leadership" element={<Navigate to="/leadership" replace />} />
+              <Route path="/public/website/contact" element={<Navigate to="/contact" replace />} />
+              <Route path="/public/website/content/:type" element={<SiteLeadership />} />
             </Route>
 
             {/* Auth */}
