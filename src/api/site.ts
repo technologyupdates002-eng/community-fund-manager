@@ -95,7 +95,7 @@ export const siteApi = {
     if (getDemoMode()) { await wait(); return demoPeople.find(p => p.slug === slug) ?? null; }
     return unwrap(await api.get<{ data: SitePerson }>(`/public/website/people/${slug}`));
   },
-  async contact(data: { name: string; email: string; phone?: string; subject: string; message: string; enquiry_type?: string }) {
+  async contact(data: { name: string; email: string; topic: 'general' | 'membership' | 'partnerships' | 'welfare'; message: string; website?: string }) {
     if (getDemoMode()) { await wait(); return { message: 'Message sent' }; }
     return api.post<{ message: string }>('/public/website/contact', data);
   },
