@@ -9,7 +9,7 @@ use RuntimeException;
 
 class WebsiteInitialContentSeeder extends Seeder
 {
-    private const GALLERY_IMAGE_COUNT = 128;
+    private const GALLERY_IMAGE_COUNT = 304;
 
     private const MEDIA_DIRECTORY = 'agm-team-building-2025';
 
@@ -151,7 +151,7 @@ class WebsiteInitialContentSeeder extends Seeder
             $size = is_file($file) ? filesize($file) : false;
 
             if ($image === false || ($image['mime'] ?? null) !== 'image/jpeg' || $size === false || $size <= 0 || $size > 5 * 1024 * 1024) {
-                throw new RuntimeException("A valid JPEG under 5 MB is required at storage/app/private/website-media/{$path}.");
+                throw new RuntimeException("A valid JPEG under 5 MB is required at storage/app/private/website-media/{$path}. Run: php artisan website:fetch-gallery");
             }
 
             $images[] = ['path' => $path, 'size' => $size];
