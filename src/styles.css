@@ -261,6 +261,7 @@ body:has(.public-shell) .floral-backdrop { display: none; }
 .member-alert { display: flex; align-items: center; gap: 12px; padding: 14px 18px; color: var(--ink); border-left: 3px solid var(--warning, var(--brand)); }
 .member-alert:hover { border-color: var(--brand); }
 
+@layer components {
 /* ───────── Public website (logo palette: ember orange, heart red, ink, gold, cream) ───────── */
 .site-shell {
   --s-cream: oklch(0.985 0.012 80);
@@ -314,3 +315,5 @@ body:has(.public-shell) .floral-backdrop { display: none; }
 @keyframes site-marquee { to { transform: translateX(-50%); } }
 .site-marquee { animation: site-marquee 60s linear infinite; }
 .site-marquee:hover { animation-play-state: paused; }
+
+}
