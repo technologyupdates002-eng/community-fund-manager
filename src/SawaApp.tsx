@@ -17,12 +17,6 @@ import ForcePasswordChangePage from '@/pages/auth/ForcePasswordChangePage';
 import ChatPage from '@/pages/member/ChatPage';
 
 // Public pages
-import HomePage from '@/pages/public/HomePage';
-import LeadershipPage from '@/pages/public/LeadershipPage';
-import PersonDetailPage from '@/pages/public/PersonDetailPage';
-import ContentListPage from '@/pages/public/ContentListPage';
-import ContentDetailPage from '@/pages/public/ContentDetailPage';
-import ContactPage from '@/pages/public/ContactPage';
 
 // Member pages
 import MemberDashboard from '@/pages/member/MemberDashboard';
@@ -128,7 +122,7 @@ export default function App() {
               {/* Old public URLs keep working */}
               <Route path="/public/website/leadership" element={<Navigate to="/leadership" replace />} />
               <Route path="/public/website/contact" element={<Navigate to="/contact" replace />} />
-              <Route path="/public/website/content/:type" element={<SiteLeadership />} />
+              <Route path="/public/website/content/:type" element={<Navigate to="/news" replace />} />
             </Route>
 
             {/* Auth */}
